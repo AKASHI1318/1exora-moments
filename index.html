@@ -58,9 +58,15 @@
         }
         #main-title:hover::before, #main-title:hover::after {
             content: "Hall of Fame"; position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; background: #0d0d0d;
+            width: 100%; height: 100%;
+            /* Use current background color for glitch effect */
+            background: var(--bg-color, #0d0d0d);
             overflow: hidden;
         }
+        body.day-mode #main-title:hover::before, body.day-mode #main-title:hover::after { background: #87CEEB; }
+        body.night-mode #main-title:hover::before, body.night-mode #main-title:hover::after { background: #000428; }
+        body.cosmic-mode #main-title:hover::before, body.cosmic-mode #main-title:hover::after { background: #000; }
+
         #main-title:hover::before { left: 2px; text-shadow: -2px 0 #ff00de; animation: glitch-1 2s linear infinite reverse; }
         #main-title:hover::after { left: -2px; text-shadow: -2px 0 #00aeff; animation: glitch-2 2s linear infinite reverse; }
         @keyframes glitch-1 { 0%, 100% { clip-path: inset(45% 0 50% 0); } 50% { clip-path: inset(20% 0 15% 0); } }
@@ -215,7 +221,7 @@
     </main>
 
     <audio id="background-audio" loop muted>
-        <source src="https://cdn.pixabay.com/download/audio/2022/08/04/audio_2d02518e31.mp3" type="audio/mpeg">
+        <source src="https://cdn.pixabay.com/download/audio/2023/04/17/audio_8787883a32.mp3" type="audio/mpeg">
     </audio>
 
     <script>
@@ -336,13 +342,21 @@
         audioToggle.addEventListener('click', () => {
             audio.muted = !audio.muted;
             audioToggle.textContent = audio.muted ? '🔇' : '🔊';
-            if (!audio.muted && audio.paused) audio.play();
+            if (!audio.muted && audio.paused) audio.play().catch(e => console.error("Audio play failed:", e));
         });
-        cosmicModeButton.addEventListener('click', () => {
-             if (!audio.muted) audio.play();
-        });
-        dayModeButton.addEventListener('click', () => audio.pause());
-        nightModeButton.addEventListener('click', () => audio.pause());
+        
+        function manageAudio(mode) {
+            if (mode === 'cosmic' && !audio.muted) {
+                audio.play().catch(e => console.error("Audio play failed:", e));
+            } else {
+                audio.pause();
+            }
+        }
+        
+        cosmicModeButton.addEventListener('click', () => manageAudio('cosmic'));
+        dayModeButton.addEventListener('click', () => manageAudio('day'));
+        nightModeButton.addEventListener('click', () => manageAudio('night'));
+
 
         // --- Canvas Starfield Background ---
         const canvas = document.getElementById('cosmic-canvas');
@@ -386,14 +400,17 @@
             }
         }
         function initStars() {
+            stars = [];
             for (let i = 0; i < 500; i++) {
                 stars.push(new Star(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 10 + 1));
             }
         }
         function animate() {
+            if (body.classList.contains('cosmic-mode')) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                stars.forEach(star => star.update());
+            }
             requestAnimationFrame(animate);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(star => star.update());
         }
         initStars();
         animate();
