@@ -24,6 +24,25 @@
         }
         body.cosmic-mode canvas#cosmic-canvas { opacity: 1; }
 
+        /* --- NEW: Creator Credit --- */
+        #creator-credit {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1002;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            letter-spacing: 2px;
+            pointer-events: none;
+            animation: credit-glow 4s ease-in-out infinite alternate;
+        }
+        @keyframes credit-glow {
+            from { text-shadow: 0 0 10px #fff, 0 0 20px #ff00de, 0 0 30px #ff00de; }
+            to { text-shadow: 0 0 10px #fff, 0 0 20px #00aeff, 0 0 30px #00aeff; }
+        }
+
         /* --- Entry Screen --- */
         #entry-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
@@ -50,29 +69,28 @@
             transition: opacity 0.5s ease;
         }
         
-        /* NEW: Glitch effect on title */
+        /* Glitch effect on title */
         #main-title {
             color: #fff; font-size: clamp(2.5rem, 10vw, 5rem);
             font-family: 'Permanent Marker', cursive; text-shadow: 0 0 10px rgba(255,255,255,0.5);
             position: relative; cursor: pointer;
+            margin-top: 30px; /* Space for creator credit */
         }
         #main-title:hover::before, #main-title:hover::after {
             content: "Hall of Fame"; position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
-            /* Use current background color for glitch effect */
             background: var(--bg-color, #0d0d0d);
             overflow: hidden;
         }
         body.day-mode #main-title:hover::before, body.day-mode #main-title:hover::after { background: #87CEEB; }
         body.night-mode #main-title:hover::before, body.night-mode #main-title:hover::after { background: #000428; }
         body.cosmic-mode #main-title:hover::before, body.cosmic-mode #main-title:hover::after { background: #000; }
-
         #main-title:hover::before { left: 2px; text-shadow: -2px 0 #ff00de; animation: glitch-1 2s linear infinite reverse; }
         #main-title:hover::after { left: -2px; text-shadow: -2px 0 #00aeff; animation: glitch-2 2s linear infinite reverse; }
         @keyframes glitch-1 { 0%, 100% { clip-path: inset(45% 0 50% 0); } 50% { clip-path: inset(20% 0 15% 0); } }
         @keyframes glitch-2 { 0%, 100% { clip-path: inset(80% 0 15% 0); } 50% { clip-path: inset(40% 0 45% 0); } }
 
-        /* NEW: 3D Interactive Cards */
+        /* 3D Interactive Cards */
         .hall-of-fame {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 50px; width: 100%; max-width: 1600px; margin-top: 50px;
@@ -143,7 +161,6 @@
         .theme-element { pointer-events: none; opacity: 0; transition: opacity 1.5s ease; position: fixed; z-index: 5;}
         .theme-element.visible { opacity: 1; }
         
-        /* Day Mode */
         body.day-mode { background: linear-gradient(to bottom, #87CEEB 0%, #aadef0 60%, #1e90ff 85%, #F5DEB3 100%); }
         #day-sun { width: 100px; height: 100px; background: #FFD700; border-radius: 50%; box-shadow: 0 0 40px #FFD700; top: 50px; left: 50px; }
         .bird { position: fixed; top: 20%; width: 50px; height: 3px; background-color: #333; border-radius: 50%; animation: fly linear infinite; }
@@ -159,13 +176,11 @@
         @keyframes flap-up { from { transform: rotate(30deg) translateY(0); } to { transform: rotate(50deg) translateY(-5px); } }
         @keyframes flap-down { from { transform: rotate(-30deg) translateY(0); } to { transform: rotate(-50deg) translateY(5px); } }
 
-        /* Night Mode */
         body.night-mode { background: #000428; }
         #night-moon { width: 100px; height: 100px; border-radius: 50%; box-shadow: 20px -10px 0 0 #f0e68c; top: 50px; left: 50%; transform: translateX(-50%); }
         #night-owl { top: 150px; left: 50%; transform: translateX(-50%); width: 120px; transition-delay: 0.5s; }
         #night-owl svg { fill: #E0E0E0; }
 
-        /* Cosmic Mode */
         body.cosmic-mode { background: #000000; }
         .shooting-star {
             position: fixed; top: 50%; left: 50%; height: 2px;
@@ -177,11 +192,11 @@
         @keyframes shooting { 0% { transform: translateX(0); } 100% { transform: translateX(300px); } }
 
         footer { margin-top: 100px; color: #aaa; text-align: center; }
-
     </style>
 </head>
 <body>
     <canvas id="cosmic-canvas"></canvas>
+    <div id="creator-credit">Created by Khusairi</div>
 
     <div id="ui-container">
         <button id="audio-toggle" class="ui-button" title="Toggle Music">🔇</button>
@@ -229,17 +244,18 @@
         const entryScreen = document.getElementById('entry-screen');
         const content = document.getElementById('content');
         const memoryCards = document.querySelectorAll('.memory-card');
+        const audio = document.getElementById('background-audio');
         
         // --- Entry Sequence ---
         entryScreen.addEventListener('click', () => {
             entryScreen.style.opacity = '0';
             entryScreen.style.pointerEvents = 'none';
+            audio.play().catch(e => console.error("Audio could not be primed:", e));
             setTimeout(() => {
                 content.style.display = 'flex';
                 memoryCards.forEach((card, index) => {
                     setTimeout(() => card.classList.add('is-visible'), index * 150);
                 });
-                // Activate cosmic mode by default after entry
                 document.getElementById('cosmic-mode-button').click();
             }, 1500);
         }, { once: true });
@@ -314,6 +330,7 @@
             themeElements.daySun.classList.add('visible');
             createBirds(5);
             createClouds(3);
+            audio.pause();
             closeSettings();
         });
 
@@ -322,6 +339,7 @@
             hideAllThemeElements();
             themeElements.nightMoon.classList.add('visible');
             themeElements.nightOwl.classList.add('visible');
+            audio.pause();
             closeSettings();
         });
         
@@ -329,6 +347,7 @@
             body.className = 'cosmic-mode';
             hideAllThemeElements();
             createShootingStars(3);
+            if (!audio.muted) audio.play().catch(e=>console.error(e));
             closeSettings();
         });
         
@@ -337,27 +356,15 @@
         function createShootingStars(count) { themeElements.shootingStarContainer.classList.add('visible'); for (let i = 0; i < count; i++) { const star = document.createElement('div'); star.className = 'shooting-star'; star.style.top = `${Math.random()*100}%`; star.style.left = `${Math.random()*100}%`; const delay = Math.random() * 5; star.style.animationDelay = `${delay}s, ${delay}s`; themeElements.shootingStarContainer.appendChild(star); } }
 
         // --- Audio Logic ---
-        const audio = document.getElementById('background-audio');
         const audioToggle = document.getElementById('audio-toggle');
         audioToggle.addEventListener('click', () => {
             audio.muted = !audio.muted;
             audioToggle.textContent = audio.muted ? '🔇' : '🔊';
-            if (!audio.muted && audio.paused) audio.play().catch(e => console.error("Audio play failed:", e));
+            if (!audio.muted && body.classList.contains('cosmic-mode')) {
+                audio.play().catch(e => console.error("Audio play failed:", e));
+            }
         });
         
-        function manageAudio(mode) {
-            if (mode === 'cosmic' && !audio.muted) {
-                audio.play().catch(e => console.error("Audio play failed:", e));
-            } else {
-                audio.pause();
-            }
-        }
-        
-        cosmicModeButton.addEventListener('click', () => manageAudio('cosmic'));
-        dayModeButton.addEventListener('click', () => manageAudio('day'));
-        nightModeButton.addEventListener('click', () => manageAudio('night'));
-
-
         // --- Canvas Starfield Background ---
         const canvas = document.getElementById('cosmic-canvas');
         const ctx = canvas.getContext('2d');
@@ -369,7 +376,6 @@
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            stars = [];
             initStars();
         });
         window.addEventListener('mousemove', e => {
