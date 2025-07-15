@@ -3,42 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1 EXORA - Our Moments</title>
+    <title>1 EXORA - Cosmic Moments</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Roboto:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* --- General Setup & Performance --- */
-        :root {
-            --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
+        :root { --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1); }
         body {
             margin: 0;
             background-color: #0d0d0d;
-            font-family: 'Helvetica Neue', sans-serif;
+            font-family: 'Roboto', 'Helvetica Neue', sans-serif;
             overflow-x: hidden;
             position: relative;
-            /* IMPORTANT: Changed to 'background' to allow gradient transitions */
             transition: background 1.5s ease;
         }
-
-        /* Faint moving particles */
-        body::after {
-            content: ''; position: fixed;
-            top: 0; left: 0; width: 200%; height: 200%;
-            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: moveParticles 200s linear infinite;
-            z-index: -1;
+        canvas#cosmic-canvas {
+            position: fixed; top: 0; left: 0;
+            z-index: -1; opacity: 0;
+            transition: opacity 1.5s ease;
         }
+        body.cosmic-mode canvas#cosmic-canvas { opacity: 1; }
 
-        @keyframes moveParticles {
-            from { transform: translate(0, 0); }
-            to { transform: translate(-50%, -50%); }
-        }
-
-        /* --- Entry Screen & Original Animations --- */
+        /* --- Entry Screen --- */
         #entry-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
             display: flex; justify-content: center; align-items: center;
@@ -56,63 +42,50 @@
             from { text-shadow: 0 0 10px #fff, 0 0 20px #ff00de, 0 0 35px #ff00de; transform: scale(1); }
             to { text-shadow: 0 0 20px #fff, 0 0 35px #00aeff, 0 0 50px #00aeff; transform: scale(1.05); }
         }
-        #sunrise-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: linear-gradient(to top, #000a20, #0a3d62, #000a20);
-            z-index: 999; opacity: 0;
-            transition: opacity 2s ease-in, background 3s ease-in-out;
-            pointer-events: none;
-        }
-        #sun {
-            width: clamp(100px, 15vw, 200px); height: clamp(100px, 15vw, 200px);
-            background: #f1c40f; border-radius: 50%;
-            position: absolute; bottom: -200px; left: 50%;
-            transform: translateX(-50%);
-            box-shadow: 0 0 40px #f1c40f, 0 0 80px #f39c12;
-            transition: all 4s var(--ease-out-quint);
-        }
-        .firework-particle {
-            position: absolute; width: 5px; height: 5px; border-radius: 50%; opacity: 1;
-            transform-origin: 50% 50%; animation: firework-burst 1.5s var(--ease-out-quint) forwards;
-        }
-        @keyframes firework-burst {
-            0% { transform: scale(1.5); opacity: 1; }
-            100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
-        }
 
         /* --- Main Content --- */
         #content {
             display: none; flex-direction: column; align-items: center;
-            padding: 40px 20px; position: relative; z-index: 10;
+            padding: 100px 20px 40px 20px; position: relative; z-index: 10;
             transition: opacity 0.5s ease;
         }
-        #content h1 {
-            color: #fff; font-size: clamp(2rem, 8vw, 4rem);
-            font-family: 'Permanent Marker', cursive; text-shadow: 0 0 10px #fff;
+        
+        /* NEW: Glitch effect on title */
+        #main-title {
+            color: #fff; font-size: clamp(2.5rem, 10vw, 5rem);
+            font-family: 'Permanent Marker', cursive; text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            position: relative; cursor: pointer;
         }
+        #main-title:hover::before, #main-title:hover::after {
+            content: "Hall of Fame"; position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; background: #0d0d0d;
+            overflow: hidden;
+        }
+        #main-title:hover::before { left: 2px; text-shadow: -2px 0 #ff00de; animation: glitch-1 2s linear infinite reverse; }
+        #main-title:hover::after { left: -2px; text-shadow: -2px 0 #00aeff; animation: glitch-2 2s linear infinite reverse; }
+        @keyframes glitch-1 { 0%, 100% { clip-path: inset(45% 0 50% 0); } 50% { clip-path: inset(20% 0 15% 0); } }
+        @keyframes glitch-2 { 0%, 100% { clip-path: inset(80% 0 15% 0); } 50% { clip-path: inset(40% 0 45% 0); } }
+
+        /* NEW: 3D Interactive Cards */
         .hall-of-fame {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 50px; width: 100%; max-width: 1600px; margin-top: 50px;
+            perspective: 2000px;
         }
         .memory-card {
-            position: relative; border-radius: 15px; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); cursor: pointer;
-            opacity: 0; transform: translateY(50px);
-            transition: transform 1s var(--ease-out-quint), opacity 1s var(--ease-out-quint), box-shadow 0.4s ease;
+            border-radius: 15px; overflow: hidden;
+            cursor: pointer; opacity: 0; transform: translateY(50px);
+            transition: transform 1s var(--ease-out-quint), opacity 1s var(--ease-out-quint), box-shadow 0.3s ease;
+            transform-style: preserve-3d;
         }
         .memory-card.is-visible { opacity: 1; transform: translateY(0); }
-        .memory-card:hover { transform: translateY(-10px) scale(1.03) !important; box-shadow: 0 0 30px #fff, 0 0 50px #00aeff; }
+        .memory-card:hover { box-shadow: 0 0 35px #fff, 0 0 60px #00aeff; }
         .memory-card img { display: block; width: 100%; height: 100%; object-fit: cover; }
-        .memory-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 15px; box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.8), inset 0 0 30px rgba(0, 0, 0, 0.9);
-            z-index: 2;
-        }
 
-        /* --- Image Modal --- */
+        /* --- UI Elements --- */
         #image-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.9); z-index: 2000;
+            background-color: rgba(0, 0, 0, 0.95); backdrop-filter: blur(5px); z-index: 2000;
             display: flex; justify-content: center; align-items: center;
             opacity: 0; pointer-events: none; transition: opacity 0.5s var(--ease-out-quint);
         }
@@ -129,112 +102,89 @@
         }
         #close-button:hover { transform: scale(1.2) rotate(90deg); }
 
-        /* --- Settings Button & Panel --- */
-        #settings-button {
-            position: fixed; top: 20px; right: 20px;
-            z-index: 1001; background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3); color: white;
-            padding: 10px 20px; border-radius: 8px; cursor: pointer;
-            font-size: 16px; backdrop-filter: blur(5px);
+        #ui-container {
+            position: fixed; top: 20px; right: 20px; z-index: 1001;
+            display: flex; gap: 10px;
+        }
+        .ui-button {
+            background-color: rgba(30, 30, 30, 0.5); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white; width: 50px; height: 50px;
+            border-radius: 50%; cursor: pointer; font-size: 24px;
+            backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center;
             transition: background-color 0.3s, transform 0.3s;
         }
-        #settings-button:hover { background-color: rgba(255, 255, 255, 0.2); transform: scale(1.05); }
+        .ui-button:hover { background-color: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
 
         #settings-panel {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1500;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             gap: 20px; background-color: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+            backdrop-filter: blur(10px); opacity: 0; pointer-events: none;
+            transition: opacity 0.5s ease;
         }
         #settings-panel.active { opacity: 1; pointer-events: all; }
         #settings-panel button {
-            background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3);
             color: white; padding: 15px 30px; font-size: 18px;
-            border-radius: 10px; cursor: pointer; min-width: 200px;
+            border-radius: 10px; cursor: pointer; min-width: 250px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
             transition: background-color 0.3s, transform 0.3s;
         }
-        #settings-panel button:hover { background-color: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
+        #settings-panel button:hover { background-color: rgba(255, 255, 255, 0.25); transform: scale(1.05); }
 
         /* --- Theme-Specific Elements & Styles --- */
-
-        /* Day Mode (BEACH THEME) */
-        body.day-mode {
-            /* Gradient for Sky -> Sea -> Sand */
-            background: linear-gradient(to bottom, #87CEEB 0%, #aadef0 60%, #1e90ff 85%, #F5DEB3 100%);
-        }
-        #day-sun {
-            width: 100px; height: 100px; background: #FFD700; border-radius: 50%;
-            box-shadow: 0 0 40px #FFD700; position: fixed; top: 50px; left: 50px;
-            z-index: 5; opacity: 0; transition: opacity 1s ease;
-        }
-        #day-sun.visible { opacity: 1; }
-        .bird {
-            position: fixed; top: 20%; width: 50px; height: 3px;
-            background-color: #333; border-radius: 50%; z-index: 6;
-            animation: fly linear infinite;
-        }
-        .bird::before, .bird::after {
-            content: ''; position: absolute; width: 25px; height: 3px;
-            background-color: #333; border-radius: 50%;
-        }
+        .theme-element { pointer-events: none; opacity: 0; transition: opacity 1.5s ease; position: fixed; z-index: 5;}
+        .theme-element.visible { opacity: 1; }
+        
+        /* Day Mode */
+        body.day-mode { background: linear-gradient(to bottom, #87CEEB 0%, #aadef0 60%, #1e90ff 85%, #F5DEB3 100%); }
+        #day-sun { width: 100px; height: 100px; background: #FFD700; border-radius: 50%; box-shadow: 0 0 40px #FFD700; top: 50px; left: 50px; }
+        .bird { position: fixed; top: 20%; width: 50px; height: 3px; background-color: #333; border-radius: 50%; animation: fly linear infinite; }
+        .bird::before, .bird::after { content: ''; position: absolute; width: 25px; height: 3px; background-color: #333; border-radius: 50%; }
         .bird::before { transform: rotate(30deg); top: -10px; left: 10px; animation: flap-up 0.5s linear infinite alternate; }
         .bird::after { transform: rotate(-30deg); top: 10px; left: 10px; animation: flap-down 0.5s linear infinite alternate; }
-        .cloud {
-            position: absolute; background: white;
-            border-radius: 50%; opacity: 0.8;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-            transition: opacity 1s ease;
-        }
-        .cloud::after, .cloud::before {
-            content: ''; position: absolute; background: white;
-            border-radius: 50%;
-        }
+        .cloud { position: absolute; background: white; border-radius: 50%; opacity: 0.8; }
+        .cloud::after, .cloud::before { content: ''; position: absolute; background: white; border-radius: 50%; }
         .cloud-1 { width: 100px; height: 30px; }
         .cloud-1::before { width: 50px; height: 50px; bottom: 10px; left: 10px; }
         .cloud-1::after { width: 60px; height: 40px; bottom: 10px; right: 5px; }
-
         @keyframes fly { from { left: -10%; } to { left: 110%; } }
         @keyframes flap-up { from { transform: rotate(30deg) translateY(0); } to { transform: rotate(50deg) translateY(-5px); } }
         @keyframes flap-down { from { transform: rotate(-30deg) translateY(0); } to { transform: rotate(-50deg) translateY(5px); } }
 
         /* Night Mode */
         body.night-mode { background: #000428; }
-        #night-moon {
-            width: 100px; height: 100px; border-radius: 50%;
-            box-shadow: 20px -10px 0 0 #f0e68c;
-            position: fixed; top: 50px; left: 50%;
-            transform: translateX(-50%); z-index: 5; opacity: 0; transition: opacity 1s ease;
-        }
-        #night-moon.visible { opacity: 1; }
-        #night-owl {
-            position: fixed; top: 150px; left: 50%; transform: translateX(-50%);
-            z-index: 6; width: 120px; opacity: 0; transition: opacity 1s ease 0.5s;
-        }
-        #night-owl.visible { opacity: 1; }
+        #night-moon { width: 100px; height: 100px; border-radius: 50%; box-shadow: 20px -10px 0 0 #f0e68c; top: 50px; left: 50%; transform: translateX(-50%); }
+        #night-owl { top: 150px; left: 50%; transform: translateX(-50%); width: 120px; transition-delay: 0.5s; }
         #night-owl svg { fill: #E0E0E0; }
 
-        /* Vibe Chill Mode */
-        body.vibe-mode {
-            background: linear-gradient(45deg, #1d0a20, #0a3d62, #200a1d);
-            background-size: 400% 400%; animation: gradient-vibe 15s ease infinite;
+        /* Cosmic Mode */
+        body.cosmic-mode { background: #000000; }
+        .shooting-star {
+            position: fixed; top: 50%; left: 50%; height: 2px;
+            background: linear-gradient(-45deg, rgba(147, 112, 219, 1), rgba(0, 0, 255, 0));
+            border-radius: 999px; filter: drop-shadow(0 0 6px rgba(157, 134, 232, 1));
+            animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
         }
-        @keyframes gradient-vibe {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        .theme-element { pointer-events: none; }
+        @keyframes tail { 0% { width: 0; } 30% { width: 100px; } 100% { width: 0; } }
+        @keyframes shooting { 0% { transform: translateX(0); } 100% { transform: translateX(300px); } }
+
         footer { margin-top: 100px; color: #aaa; text-align: center; }
+
     </style>
 </head>
 <body>
-    <button id="settings-button">Settings</button>
+    <canvas id="cosmic-canvas"></canvas>
+
+    <div id="ui-container">
+        <button id="audio-toggle" class="ui-button" title="Toggle Music">🔇</button>
+        <button id="settings-button" class="ui-button" title="Settings">⚙️</button>
+    </div>
     <div id="settings-panel">
-        <button id="day-mode-button">Day Mode</button>
-        <button id="night-mode-button">Night Mode</button>
-        <button id="vibe-mode-button">Vibe Chill Mode</button>
+        <button id="day-mode-button">☀️ Day Mode</button>
+        <button id="night-mode-button">🌙 Night Mode</button>
+        <button id="cosmic-mode-button">🌌 Cosmic Drift</button>
     </div>
 
     <div id="day-sun" class="theme-element"></div>
@@ -244,16 +194,16 @@
         <svg viewBox="0 0 100 100"><path d="M50,10 C27.9,10 10,27.9 10,50 C10,72.1 27.9,90 50,90 C72.1,90 90,72.1 90,50 C90,27.9 72.1,10 50,10 Z M35,40 C39.1,40 42.5,43.4 42.5,47.5 C42.5,51.6 39.1,55 35,55 C30.9,55 27.5,51.6 27.5,47.5 C27.5,43.4 30.9,40 35,40 Z M65,40 C69.1,40 72.5,43.4 72.5,47.5 C72.5,51.6 69.1,55 65,55 C60.9,55 57.5,51.6 57.5,47.5 C57.5,43.4 60.9,40 65,40 Z M50,65 C45,65 40,70 40,75 L60,75 C60,70 55,65 50,65 Z"></path></svg>
     </div>
     <div id="bird-container" class="theme-element"></div>
+    <div id="shooting-star-container" class="theme-element"></div>
 
     <div id="entry-screen"><h1 id="entry-text">1 EXORA</h1></div>
-    <div id="sunrise-container"><div id="sun"></div></div>
     <div id="image-modal">
         <span id="close-button">&times;</span>
         <img src="" alt="Enlarged Memory" id="modal-image">
     </div>
 
     <main id="content">
-        <h1>Hall of Fame</h1>
+        <h1 id="main-title">Hall of Fame</h1>
         <section class="hall-of-fame">
             <div class="memory-card"><img src="WhatsApp Image 2025-07-14 at 01.10.25_dd89f7dc.jpg" alt="Class Memory 1"></div>
             <div class="memory-card"><img src="WhatsApp Image 2025-07-14 at 01.10.26_8e5c4210.jpg" alt="Class Memory 2"></div>
@@ -264,88 +214,51 @@
         <footer><p>&copy; 2025 | 1 EXORA - Moments that Last Forever.</p></footer>
     </main>
 
+    <audio id="background-audio" loop muted>
+        <source src="https://cdn.pixabay.com/download/audio/2022/08/04/audio_2d02518e31.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
-        const entryScreen = document.getElementById('entry-screen');
-        const sunriseContainer = document.getElementById('sunrise-container');
-        const sun = document.getElementById('sun');
-        const content = document.getElementById('content');
         const body = document.body;
+        const entryScreen = document.getElementById('entry-screen');
+        const content = document.getElementById('content');
         const memoryCards = document.querySelectorAll('.memory-card');
-        const imageModal = document.getElementById('image-modal');
-        const modalImage = document.getElementById('modal-image');
-        const closeButton = document.getElementById('close-button');
-
-        // Settings Elements
-        const settingsButton = document.getElementById('settings-button');
-        const settingsPanel = document.getElementById('settings-panel');
-        const dayModeButton = document.getElementById('day-mode-button');
-        const nightModeButton = document.getElementById('night-mode-button');
-        const vibeModeButton = document.getElementById('vibe-mode-button');
-        const daySun = document.getElementById('day-sun');
-        const nightMoon = document.getElementById('night-moon');
-        const nightOwl = document.getElementById('night-owl');
-        const birdContainer = document.getElementById('bird-container');
-        const cloudContainer = document.getElementById('cloud-container');
-
-        // Original Cinematic Sequence
+        
+        // --- Entry Sequence ---
         entryScreen.addEventListener('click', () => {
             entryScreen.style.opacity = '0';
             entryScreen.style.pointerEvents = 'none';
-            sunriseContainer.style.opacity = '1';
-            
             setTimeout(() => {
-                sunriseContainer.style.background = 'linear-gradient(to top, #f39c12, #87CEEB)';
-                sun.style.bottom = '60%';
-                sun.style.backgroundColor = '#f39c12';
-                sun.style.boxShadow = '0 0 60px #f39c12, 0 0 100px #e67e22';
-            }, 500);
-
-            setTimeout(() => {
-                createFireworks(); 
-                sunriseContainer.style.background = 'linear-gradient(to top, #000a20, #0a3d62)';
-                sun.style.bottom = '-200px';
-            }, 4500);
-
-            setTimeout(() => {
-                body.style.backgroundColor = '#1a1a1d';
                 content.style.display = 'flex';
                 memoryCards.forEach((card, index) => {
                     setTimeout(() => card.classList.add('is-visible'), index * 150);
                 });
-            }, 5500);
-
-            setTimeout(() => {
-                entryScreen.style.display = 'none';
-                sunriseContainer.style.display = 'none';
-            }, 8000);
+                // Activate cosmic mode by default after entry
+                document.getElementById('cosmic-mode-button').click();
+            }, 1500);
         }, { once: true });
-        
-        function createFireworks() {
-            const fireworkColors = ['#ff4757', '#ffa502', '#2ed573', '#1e90ff', '#ff6b81', '#feca57', '#ffffff'];
-            for (let i = 0; i < 10; i++) { 
-                setTimeout(() => {
-                    const burstX = Math.random() * window.innerWidth;
-                    const burstY = Math.random() * (window.innerHeight / 2);
-                    for (let j = 0; j < 70; j++) { 
-                        const p = document.createElement('div');
-                        p.className = 'firework-particle';
-                        sunriseContainer.appendChild(p);
-                        p.style.left = `${burstX}px`;
-                        p.style.top = `${burstY}px`;
-                        p.style.backgroundColor = fireworkColors[Math.floor(Math.random() * fireworkColors.length)];
-                        const angle = Math.random() * 360;
-                        const radius = Math.random() * 200 + 80;
-                        const x = Math.cos(angle * (Math.PI / 180)) * radius;
-                        const y = Math.sin(angle * (Math.PI / 180)) * radius;
-                        p.style.setProperty('--x', `${x}px`);
-                        p.style.setProperty('--y', `${y}px`);
-                        p.addEventListener('animationend', () => p.remove());
-                    }
-                }, Math.random() * 1000);
-            }
-        }
-        
-        // Image Modal Logic
+
+        // --- 3D Interactive Card Logic ---
+        memoryCards.forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const rotateX = -y / (rect.height / 2) * 10;
+                const rotateY = x / (rect.width / 2) * 10;
+                card.style.transition = 'transform 0.1s';
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transition = 'transform 0.5s';
+                card.style.transform = 'rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
+        });
+
+        // --- Image Modal Logic ---
+        const imageModal = document.getElementById('image-modal');
+        const modalImage = document.getElementById('modal-image');
+        const closeButton = document.getElementById('close-button');
         memoryCards.forEach(card => {
             card.addEventListener('click', () => {
                 modalImage.src = card.querySelector('img').src;
@@ -356,36 +269,43 @@
         closeButton.addEventListener('click', closeModal);
         imageModal.addEventListener('click', (e) => { if (e.target === imageModal) closeModal(); });
 
-        // Settings Logic
+        // --- Settings and Theme Logic ---
+        const settingsButton = document.getElementById('settings-button');
+        const settingsPanel = document.getElementById('settings-panel');
+        const dayModeButton = document.getElementById('day-mode-button');
+        const nightModeButton = document.getElementById('night-mode-button');
+        const cosmicModeButton = document.getElementById('cosmic-mode-button');
+        
+        const themeElements = {
+            daySun: document.getElementById('day-sun'),
+            cloudContainer: document.getElementById('cloud-container'),
+            nightMoon: document.getElementById('night-moon'),
+            nightOwl: document.getElementById('night-owl'),
+            birdContainer: document.getElementById('bird-container'),
+            shootingStarContainer: document.getElementById('shooting-star-container')
+        };
+        
         settingsButton.addEventListener('click', () => {
-            settingsPanel.classList.add('active');
-            content.style.opacity = '0';
+            settingsPanel.classList.toggle('active');
+            content.style.opacity = settingsPanel.classList.contains('active') ? '0' : '1';
         });
-
-        settingsPanel.addEventListener('click', (e) => {
-            if (e.target === settingsPanel) {
-                settingsPanel.classList.remove('active');
-                content.style.opacity = '1';
-            }
-        });
-
-        function hideAllThemeElements() {
-            daySun.classList.remove('visible');
-            nightMoon.classList.remove('visible');
-            nightOwl.classList.remove('visible');
-            birdContainer.innerHTML = '';
-            cloudContainer.innerHTML = '';
-        }
 
         function closeSettings() {
             settingsPanel.classList.remove('active');
             content.style.opacity = '1';
         }
+        
+        function hideAllThemeElements() {
+            Object.values(themeElements).forEach(el => {
+                el.classList.remove('visible');
+                if (el.innerHTML) el.innerHTML = '';
+            });
+        }
 
         dayModeButton.addEventListener('click', () => {
             body.className = 'day-mode';
             hideAllThemeElements();
-            daySun.classList.add('visible');
+            themeElements.daySun.classList.add('visible');
             createBirds(5);
             createClouds(3);
             closeSettings();
@@ -394,40 +314,89 @@
         nightModeButton.addEventListener('click', () => {
             body.className = 'night-mode';
             hideAllThemeElements();
-            nightMoon.classList.add('visible');
-            nightOwl.classList.add('visible');
-            closeSettings();
-        });
-
-        vibeModeButton.addEventListener('click', () => {
-            body.className = 'vibe-mode';
-            hideAllThemeElements();
+            themeElements.nightMoon.classList.add('visible');
+            themeElements.nightOwl.classList.add('visible');
             closeSettings();
         });
         
-        function createBirds(count) {
-            for (let i = 0; i < count; i++) {
-                const bird = document.createElement('div');
-                bird.className = 'bird';
-                bird.style.top = `${Math.random() * 30 + 5}%`;
-                bird.style.animationDuration = `${Math.random() * 8 + 8}s`;
-                bird.style.animationDelay = `${Math.random() * 5}s`;
-                birdContainer.appendChild(bird);
-                bird.addEventListener('animationend', () => bird.remove());
+        cosmicModeButton.addEventListener('click', () => {
+            body.className = 'cosmic-mode';
+            hideAllThemeElements();
+            createShootingStars(3);
+            closeSettings();
+        });
+        
+        function createBirds(count) { for (let i = 0; i < count; i++) { const bird = document.createElement('div'); bird.className = 'bird'; bird.style.top = `${Math.random()*30+5}%`; bird.style.animationDuration = `${Math.random()*8+8}s`; bird.style.animationDelay = `${Math.random()*5}s`; themeElements.birdContainer.appendChild(bird); } }
+        function createClouds(count) { for (let i = 0; i < count; i++) { const cloud = document.createElement('div'); cloud.className = 'cloud cloud-1'; cloud.style.top = `${Math.random()*20+5}%`; cloud.style.left = `${Math.random()*80}%`; cloud.style.transform = `scale(${Math.random()*0.5+0.8})`; themeElements.cloudContainer.appendChild(cloud); } }
+        function createShootingStars(count) { themeElements.shootingStarContainer.classList.add('visible'); for (let i = 0; i < count; i++) { const star = document.createElement('div'); star.className = 'shooting-star'; star.style.top = `${Math.random()*100}%`; star.style.left = `${Math.random()*100}%`; const delay = Math.random() * 5; star.style.animationDelay = `${delay}s, ${delay}s`; themeElements.shootingStarContainer.appendChild(star); } }
+
+        // --- Audio Logic ---
+        const audio = document.getElementById('background-audio');
+        const audioToggle = document.getElementById('audio-toggle');
+        audioToggle.addEventListener('click', () => {
+            audio.muted = !audio.muted;
+            audioToggle.textContent = audio.muted ? '🔇' : '🔊';
+            if (!audio.muted && audio.paused) audio.play();
+        });
+        cosmicModeButton.addEventListener('click', () => {
+             if (!audio.muted) audio.play();
+        });
+        dayModeButton.addEventListener('click', () => audio.pause());
+        nightModeButton.addEventListener('click', () => audio.pause());
+
+        // --- Canvas Starfield Background ---
+        const canvas = document.getElementById('cosmic-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let stars = [];
+        let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            initStars();
+        });
+        window.addEventListener('mousemove', e => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        class Star {
+            constructor(x, y, z) {
+                this.x = x; this.y = y; this.z = z;
+                this.x_ = x; this.y_ = y;
+                this.radius = 1.5 * (1 / z);
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x_, this.y_, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${1 / this.z})`;
+                ctx.fill();
+            }
+            update() {
+                const dx = mouse.x - canvas.width / 2;
+                const dy = mouse.y - canvas.height / 2;
+                this.x_ = this.x + dx * (1 / (this.z * 5));
+                this.y_ = this.y + dy * (1 / (this.z * 5));
+                this.z -= 0.01;
+                if (this.z <= 0) { this.z = Math.random() * 10 + 1; }
+                this.draw();
             }
         }
-
-        function createClouds(count) {
-            for (let i = 0; i < count; i++) {
-                const cloud = document.createElement('div');
-                cloud.className = 'cloud cloud-1'; // Simple cloud style
-                cloud.style.top = `${Math.random() * 20 + 5}%`;
-                cloud.style.left = `${Math.random() * 80}%`;
-                cloud.style.transform = `scale(${Math.random() * 0.5 + 0.8})`;
-                cloudContainer.appendChild(cloud);
+        function initStars() {
+            for (let i = 0; i < 500; i++) {
+                stars.push(new Star(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 10 + 1));
             }
         }
-
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => star.update());
+        }
+        initStars();
+        animate();
     </script>
 </body>
 </html>
