@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1 EXORA - Memory Archives</title>
+    <title>1 EXORA - Memory Archives v2.0</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&family=Permanent+Marker&display=swap" rel="stylesheet">
@@ -49,20 +49,17 @@
             transition: opacity 2s var(--ease-out-quint);
         }
         #entry-text {
-            font-family: 'Orbitron', cursive; font-size: clamp(2rem, 10vw, 6rem);
-            color: #fff; text-shadow: 0 0 10px var(--glow-color-1), 0 0 20px var(--glow-color-1);
-            animation: pulse-entry 2.5s infinite alternate;
+            font-family: 'Orbitron', monospace; font-size: clamp(3rem, 15vw, 8rem);
+            color: #fff; text-shadow: 0 0 10px var(--glow-color-2), 0 0 20px var(--glow-color-2);
         }
+        #entry-text .cursor { display: inline-block; background-color: #fff; margin-left: 10px; width: 20px; animation: blink 1s step-end infinite; }
+        @keyframes blink { from, to { background-color: transparent } 50% { background-color: #fff; } }
         #entry-subtext {
-            font-family: 'Roboto', sans-serif; font-size: 1rem; color: var(--glow-color-2);
+            font-family: 'Roboto', sans-serif; font-size: 1rem; color: var(--glow-color-1);
             margin-top: 20px; letter-spacing: 4px; text-transform: uppercase;
-            opacity: 0; animation: fade-in 2s 1s forwards;
+            opacity: 0; animation: fade-in 2s 2.5s forwards;
         }
         @keyframes fade-in { to { opacity: 1; } }
-        @keyframes pulse-entry {
-            from { text-shadow: 0 0 10px var(--glow-color-1), 0 0 20px var(--glow-color-1); transform: scale(1); }
-            to { text-shadow: 0 0 15px var(--glow-color-2), 0 0 25px var(--glow-color-2); transform: scale(1.03); }
-        }
 
         /* --- Main Content --- */
         #content {
@@ -70,38 +67,25 @@
             padding: 100px 20px 40px 20px; position: relative; z-index: 10;
         }
 
-        /* Glitch effect on title */
+        /* Captain's Log / Title */
+        #log-container { text-align: center; margin-bottom: 20px; }
         #main-title {
             color: #fff; font-size: clamp(2.5rem, 10vw, 5rem);
-            font-family: 'Permanent Marker', cursive; text-shadow: 0 0 10px rgba(255,255,255,0.5);
-            position: relative; cursor: default; margin-bottom: 20px;
+            font-family: 'Permanent Marker', cursive; text-shadow: 0 0 10px rgba(255,255,255,0.7);
+            position: relative; cursor: pointer;
+            transition: transform 0.3s, text-shadow 0.3s;
         }
-        #main-title .glitch-text {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            opacity: 0;
-            animation: glitch-appear 4s steps(40, end) 2s forwards;
+        #main-title:hover { transform: scale(1.05); text-shadow: 0 0 20px var(--glow-color-1); }
+        #logbook-panel {
+            max-width: 800px; margin: 20px auto;
+            border-left: 3px solid var(--glow-color-2); padding-left: 20px;
+            font-family: 'Orbitron', monospace; text-align: left;
+            height: 0; opacity: 0; overflow: hidden;
+            transition: all 1s var(--ease-out-quint);
         }
-        .glitch-text:nth-child(2) { color: var(--glow-color-1); animation-name: glitch-1; }
-        .glitch-text:nth-child(3) { color: var(--glow-color-2); animation-name: glitch-2; }
-        @keyframes glitch-appear { to { opacity: 1; } }
-        @keyframes glitch-1 {
-            0% { transform: translate(0); clip-path: inset(80% -6px 15% 0); }
-            10% { clip-path: inset(50% -6px 30% 0); } 20% { clip-path: inset(20% -6px 65% 0); }
-            30% { clip-path: inset(60% -6px 20% 0); } 40% { clip-path: inset(30% -6px 50% 0); }
-            50% { clip-path: inset(10% -6px 70% 0); } 60% { clip-path: inset(85% -6px 5% 0); }
-            70% { clip-path: inset(40% -6px 45% 0); } 80% { clip-path: inset(70% -6px 10% 0); }
-            90% { clip-path: inset(15% -6px 75% 0); } 100% { transform: translate(0); clip-path: inset(80% -6px 15% 0); }
-        }
-        @keyframes glitch-2 {
-            0% { transform: translate(0); clip-path: inset(5% 0 90% -4px); }
-            10% { clip-path: inset(40% 0 55% -4px); } 20% { clip-path: inset(65% 0 20% -4px); }
-            30% { clip-path: inset(25% 0 60% -4px); } 40% { clip-path: inset(55% 0 35% -4px); }
-            50% { clip-path: inset(80% 0 5% -4px); } 60% { clip-path: inset(10% 0 70% -4px); }
-            70% { clip-path: inset(50% 0 40% -4px); } 80% { clip-path: inset(75% 0 15% -4px); }
-            90% { clip-path: inset(20% 0 65% -4px); } 100% { transform: translate(0); clip-path: inset(5% 0 90% -4px); }
-        }
-        
+        #logbook-panel.visible { height: 150px; opacity: 1; }
+        #log-text .cursor { display: inline-block; background-color: #fff; width: 10px; animation: blink 1s step-end infinite; }
+
         /* 3D Interactive Cards */
         .hall-of-fame {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -109,14 +93,14 @@
             perspective: 2500px;
         }
         .memory-card {
-            border-radius: 15px; overflow: hidden;
-            cursor: pointer; opacity: 0; transform: translateY(50px);
-            transition: all 0.5s var(--ease-out-quint);
+            border-radius: 15px;
+            cursor: pointer; opacity: 0; transform: translateY(50px) rotateX(0) rotateY(0);
+            transition: opacity 1s var(--ease-out-quint), transform 1s var(--ease-out-quint);
             transform-style: preserve-3d; position: relative;
             border: 2px solid transparent;
         }
         .memory-card.is-visible { opacity: 1; transform: translateY(0); }
-        .memory-card:hover { transform: scale(1.05); }
+        .memory-card:hover { transition: transform 0.1s; }
         .memory-card .shimmer-border {
             position: absolute; top: -2px; left: -2px; width: calc(100% + 4px); height: calc(100% + 4px);
             border-radius: 15px; z-index: -1;
@@ -130,7 +114,6 @@
 
         .memory-card img {
             display: block; width: 100%; height: 100%; object-fit: cover;
-            transition: filter 0.4s ease;
             border-radius: 13px;
         }
         .card-overlay {
@@ -142,29 +125,27 @@
         .memory-card:hover .card-overlay { opacity: 1; }
         .card-overlay h3 { margin: 0; font-family: 'Orbitron'; font-size: 1.1rem; }
         
-        /* Secret Card */
         #secret-card { display: none; }
         #secret-card.is-visible { display: block; }
         
-        /* UI Elements */
-        #image-modal, #settings-panel {
+        /* UI & Modals */
+        #image-modal, #settings-panel, #konami-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px);
             opacity: 0; pointer-events: none; transition: opacity 0.5s var(--ease-out-quint);
             z-index: 2000; display: flex; justify-content: center; align-items: center;
         }
         #settings-panel { z-index: 1500; flex-direction: column; gap: 20px; }
-        #image-modal.visible, #settings-panel.active { opacity: 1; pointer-events: all; }
+        #konami-overlay { z-index: 3000; flex-direction: column; color: #00ff7f; font-family: 'Orbitron'; }
+        #image-modal.visible, #settings-panel.active, #konami-overlay.visible { opacity: 1; pointer-events: all; }
+        
         #modal-image {
             max-width: 90%; max-height: 80%; border-radius: 10px;
             box-shadow: 0 0 60px var(--glow-color-2); transform: scale(0.8);
             transition: transform 0.5s var(--ease-out-quint);
         }
         #image-modal.visible #modal-image { transform: scale(1); }
-        #close-button {
-            position: absolute; top: 20px; right: 35px; font-size: 50px;
-            color: #fff; cursor: pointer; transition: transform 0.3s ease, color 0.3s;
-        }
+        #close-button { position: absolute; top: 20px; right: 35px; font-size: 50px; color: #fff; cursor: pointer; transition: transform 0.3s ease, color 0.3s; }
         #close-button:hover { transform: scale(1.2) rotate(90deg); color: var(--glow-color-1); }
 
         #ui-container { position: fixed; top: 20px; right: 20px; z-index: 1001; display: flex; gap: 10px; }
@@ -172,8 +153,7 @@
             background-color: rgba(30, 30, 30, 0.5); border: 1px solid rgba(255, 255, 255, 0.2);
             color: white; width: 50px; height: 50px;
             border-radius: 50%; cursor: pointer; font-size: 24px; backdrop-filter: blur(8px);
-            display: flex; justify-content: center; align-items: center;
-            transition: all 0.3s;
+            display: flex; justify-content: center; align-items: center; transition: all 0.3s;
         }
         .ui-button:hover { background-color: rgba(255, 255, 255, 0.2); transform: scale(1.1); box-shadow: 0 0 15px var(--glow-color-2); }
         #settings-panel button {
@@ -189,44 +169,36 @@
         .theme-element { pointer-events: none; opacity: 0; transition: opacity 1.5s ease; position: fixed; z-index: 5;}
         .theme-element.visible { opacity: 1; }
         
-        /* DAY MODE */
         body.day-mode { background: linear-gradient(to bottom, #87CEEB 0%, #aadef0 100%); }
-        /* NIGHT MODE */
+        .bird { position: fixed; width: 50px; height: 3px; background-color: #333; border-radius: 50%; animation: fly linear infinite; }
+        .bird::before, .bird::after { content: ''; position: absolute; width: 25px; height: 3px; background-color: #333; border-radius: 50%; animation: flap 0.5s linear infinite alternate; }
+        .bird::before { transform-origin: left; transform: rotate(30deg); } .bird::after { transform-origin: left; transform: rotate(-30deg); }
+        @keyframes fly { from { left: -10%; } to { left: 110%; } }
+        @keyframes flap { to { transform: rotate(-30deg); } } body.night-mode .bird::after { animation-direction: alternate-reverse; }
+
         body.night-mode { background: linear-gradient(to bottom, #020111 60%, #20202c 100%); }
-        /* COSMIC MODE */
+        #night-owl { width: 80px; top: 20%; right: 10%; }
+        #night-owl svg { fill: #E0E0E0; }
+        #night-owl .eye { fill: #ffc700; animation: owl-blink 5s infinite; }
+        @keyframes owl-blink { 0%, 95%, 100% { transform: scaleY(1); } 97.5% { transform: scaleY(0.1); } }
+
         body.cosmic-mode { background: #000; }
-        /* NOSTALGIA MODE */
+        
         body.nostalgia-mode { background-color: #fdf6e3; }
         body.nostalgia-mode #content, body.nostalgia-mode footer { filter: sepia(0.7) contrast(1.1) brightness(0.9); }
-        body.nostalgia-mode #main-title, body.nostalgia-mode .card-overlay h3, body.nostalgia-mode footer, body.nostalgia-mode #creator-credit { color: #44281d; text-shadow: none; }
-        .dust-particle {
-            position: fixed; background: rgba(119, 101, 89, 0.2);
-            border-radius: 50%; animation: float 20s linear infinite;
-        }
+        body.nostalgia-mode #main-title, body.nostalgia-mode .card-overlay h3, body.nostalgia-mode footer, body.nostalgia-mode #creator-credit, body.nostalgia-mode #logbook-panel { color: #44281d; text-shadow: none; }
+        .dust-particle { position: fixed; background: rgba(119, 101, 89, 0.2); border-radius: 50%; animation: float 20s linear infinite; }
         @keyframes float {
             from { transform: translateY(100vh) translateX(var(--x-start)); }
             to { transform: translateY(-100px) translateX(var(--x-end)); }
         }
 
         /* Timeline */
-        #timeline-container {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
-            z-index: 100; overflow-x: auto; white-space: nowrap;
-            padding: 15px 0;
-        }
+        #timeline-container { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 100; overflow-x: auto; white-space: nowrap; padding: 15px 0; }
         #timeline { display: inline-block; }
-        .timeline-event {
-            display: inline-block; margin: 0 30px; cursor: pointer;
-            text-align: center; color: #ccc;
-            transition: color 0.3s, transform 0.3s;
-        }
+        .timeline-event { display: inline-block; margin: 0 30px; cursor: pointer; text-align: center; color: #ccc; transition: color 0.3s, transform 0.3s; }
         .timeline-event:hover { color: #fff; transform: scale(1.1); }
-        .timeline-event .dot {
-            width: 10px; height: 10px; background: #ccc;
-            border-radius: 50%; margin: 0 auto 5px;
-            transition: background 0.3s;
-        }
+        .timeline-event .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; margin: 0 auto 5px; transition: background 0.3s; }
         .timeline-event:hover .dot { background: var(--glow-color-2); }
         .timeline-event .date { font-size: 0.8rem; }
         .timeline-event .label { font-size: 1rem; font-family: 'Orbitron'; }
@@ -249,56 +221,42 @@
     </div>
 
     <div id="dust-container" class="theme-element"></div>
+    <div id="bird-container" class="theme-element"></div>
+    <div id="night-owl" class="theme-element">
+        <svg viewBox="0 0 100 100"><path d="M50,10 C27.9,10 10,27.9 10,50 C10,72.1 27.9,90 50,90 C72.1,90 90,72.1 90,50 C90,27.9 72.1,10 50,10 Z M35,40 C30.9,40 27.5,43.4 27.5,47.5 C27.5,51.6 30.9,55 35,55 C39.1,55 42.5,51.6 42.5,47.5 C42.5,43.4 39.1,40 35,40 Z M65,40 C60.9,40 57.5,43.4 57.5,47.5 C57.5,51.6 60.9,55 65,55 C69.1,55 72.5,51.6 72.5,47.5 C72.5,43.4 69.1,40 65,40 Z"/><circle class="eye" cx="35" cy="47.5" r="5"/><circle class="eye" cx="65" cy="47.5" r="5"/><path d="M50,65 C45,65 40,70 40,75 L60,75 C60,70 55,65 50,65 Z"/></svg>
+    </div>
     
     <div id="entry-screen">
-        <h1 id="entry-text">INITIALIZING...</h1>
-        <p id="entry-subtext">[ Click to access Memory Archives ]</p>
+        <h1 id="entry-text"></h1>
+        <p id="entry-subtext">[ Click to Access Memory Archives ]</p>
     </div>
     
     <div id="image-modal">
         <span id="close-button">&times;</span>
         <img src="" alt="Enlarged Memory" id="modal-image">
     </div>
+
+    <div id="konami-overlay">
+        <h2>SYSTEM OVERRIDE</h2>
+        <p>SECRET ARCHIVES UNLOCKED</p>
+    </div>
     
     <main id="content">
         <div id="creator-credit">Archives Curated by Khusairi</div>
-        <h1 id="main-title">
-            <span class="base-text">Hall of Fame</span>
-            <span class="glitch-text">1 EXORA</span>
-            <span class="glitch-text">1 EXORA</span>
-        </h1>
+        <div id="log-container">
+            <h1 id="main-title">Captain's Log</h1>
+            <div id="logbook-panel">
+                <p id="log-text"></p>
+            </div>
+        </div>
 
         <section class="hall-of-fame">
-            <div class="memory-card" data-event="first-day">
-                <div class="shimmer-border"></div>
-                <img src="WhatsApp Image 2025-07-14 at 01.10.25_dd89f7dc.jpg" alt="Class Memory 1">
-                <div class="card-overlay"><h3>Memory Fragment: The beginning of我們的旅程 (our journey).</h3></div>
-            </div>
-            <div class="memory-card" data-event="sports-day">
-                <div class="shimmer-border"></div>
-                <img src="WhatsApp Image 2025-07-14 at 01.10.26_8e5c4210.jpg" alt="Class Memory 2">
-                <div class="card-overlay"><h3>Memory Fragment: Hallway hustle between classes.</h3></div>
-            </div>
-            <div class="memory-card" data-event="class-project">
-                <div class="shimmer-border"></div>
-                <img src="WhatsApp Image 2025-07-14 at 01.10.26_bac96392.jpg" alt="Class Memory 3">
-                <div class="card-overlay"><h3>Memory Fragment: Focused minds, shared goals.</h3></div>
-            </div>
-            <div class="memory-card" data-event="canteen">
-                <div class="shimmer-border"></div>
-                <img src="WhatsApp Image 2025-07-14 at 01.10.25_096bfc5b.jpg" alt="Class Memory 4">
-                <div class="card-overlay"><h3>Memory Fragment: Candid moments are the best moments.</h3></div>
-            </div>
-             <div class="memory-card" data-event="last-day">
-                <div class="shimmer-border"></div>
-                <img src="WhatsApp Image 2025-07-14 at 01.10.25_4cbf3146.jpg" alt="Class Memory 5">
-                <div class="card-overlay"><h3>Memory Fragment: Unity in spirit, forever a team.</h3></div>
-            </div>
-            <div class="memory-card" id="secret-card" data-event="secret">
-                <div class="shimmer-border"></div>
-                <img src="https://i.imgur.com/vH9kcN9.jpeg" alt="Secret Class Memory">
-                <div class="card-overlay"><h3>SECRET MEMORY: The one we'll never forget!</h3></div>
-            </div>
+            <div class="memory-card" data-event="first-day"><div class="shimmer-border"></div><img src="WhatsApp Image 2025-07-14 at 01.10.25_dd89f7dc.jpg" alt="Class Memory 1"><div class="card-overlay"><h3>Memory Fragment: The beginning of 我們的旅程 (our journey).</h3></div></div>
+            <div class="memory-card" data-event="sports-day"><div class="shimmer-border"></div><img src="WhatsApp Image 2025-07-14 at 01.10.26_8e5c4210.jpg" alt="Class Memory 2"><div class="card-overlay"><h3>Memory Fragment: Hallway hustle between classes.</h3></div></div>
+            <div class="memory-card" data-event="class-project"><div class="shimmer-border"></div><img src="WhatsApp Image 2025-07-14 at 01.10.26_bac96392.jpg" alt="Class Memory 3"><div class="card-overlay"><h3>Memory Fragment: Focused minds, shared goals.</h3></div></div>
+            <div class="memory-card" data-event="canteen"><div class="shimmer-border"></div><img src="WhatsApp Image 2025-07-14 at 01.10.25_096bfc5b.jpg" alt="Class Memory 4"><div class="card-overlay"><h3>Memory Fragment: Candid moments are the best moments.</h3></div></div>
+            <div class="memory-card" data-event="last-day"><div class="shimmer-border"></div><img src="WhatsApp Image 2025-07-14 at 01.10.25_4cbf3146.jpg" alt="Class Memory 5"><div class="card-overlay"><h3>Memory Fragment: Unity in spirit, forever a team.</h3></div></div>
+            <div class="memory-card" id="secret-card" data-event="secret"><div class="shimmer-border"></div><img src="https://i.imgur.com/vH9kcN9.jpeg" alt="Secret Class Memory"><div class="card-overlay"><h3>SECRET MEMORY: The one we'll never forget!</h3></div></div>
         </section>
         
         <footer id="footer"><p>&copy; 2025 | 1 EXORA Archives - Moments That Last Forever.</p></footer>
@@ -319,6 +277,7 @@
     <audio id="night-audio" loop><source src="https://cdn.pixabay.com/download/audio/2022/08/27/audio_5029e0a05a.mp3"></audio>
     <audio id="nostalgia-audio" loop><source src="https://cdn.pixabay.com/download/audio/2022/11/27/audio_249a5f5532.mp3"></audio>
     <audio id="click-audio"><source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_731081a251.mp3"></audio>
+    <audio id="secret-audio"><source src="https://cdn.pixabay.com/download/audio/2022/03/08/audio_97116892e3.mp3"></audio>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -326,19 +285,28 @@
         const entryScreen = document.getElementById('entry-screen');
         const content = document.getElementById('content');
         
-        // --- Audio Elements ---
         const audios = {
-            cosmic: document.getElementById('cosmic-audio'),
-            day: document.getElementById('day-audio'),
-            night: document.getElementById('night-audio'),
-            nostalgia: document.getElementById('nostalgia-audio'),
-            click: document.getElementById('click-audio')
+            cosmic: document.getElementById('cosmic-audio'), day: document.getElementById('day-audio'),
+            night: document.getElementById('night-audio'), nostalgia: document.getElementById('nostalgia-audio'),
+            click: document.getElementById('click-audio'), secret: document.getElementById('secret-audio'),
         };
         let isMuted = true;
         let currentAudio = null;
-        audios.click.volume = 0.5;
+        Object.values(audios).forEach(a => a.volume = 0.5);
 
         // --- Entry Sequence ---
+        const entryText = document.getElementById('entry-text');
+        const textToType = "1 EXORA";
+        function typeText(element, text, i) {
+            if (i < text.length) {
+                element.innerHTML = text.substring(0, i + 1) + '<span class="cursor"></span>';
+                setTimeout(() => typeText(element, text, i + 1), 200);
+            } else {
+                setTimeout(() => element.querySelector('.cursor').style.display = 'none', 1000);
+            }
+        }
+        typeText(entryText, textToType, 0);
+
         entryScreen.addEventListener('click', () => {
             entryScreen.style.opacity = '0';
             entryScreen.style.pointerEvents = 'none';
@@ -351,8 +319,19 @@
             }, 1500);
         }, { once: true });
 
-        // --- Card Interaction ---
+        // --- 3D Card Interaction ---
         document.querySelectorAll('.memory-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const rotateY = -20 * ((x - rect.width / 2) / rect.width);
+                const rotateX = 20 * ((y - rect.height / 2) / rect.height);
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
             card.addEventListener('click', () => {
                 if(!isMuted) audios.click.play();
                 const imageModal = document.getElementById('image-modal');
@@ -363,6 +342,18 @@
         const closeModal = () => document.getElementById('image-modal').classList.remove('visible');
         document.getElementById('close-button').addEventListener('click', closeModal);
         document.getElementById('image-modal').addEventListener('click', (e) => e.target === document.getElementById('image-modal') && closeModal());
+        
+        // --- Captain's Log ---
+        const logContainer = document.getElementById('log-container');
+        const logbookPanel = document.getElementById('logbook-panel');
+        const logTextElement = document.getElementById('log-text');
+        const logContent = "Stardate 2025. The journey of the 1-Exora crew has been logged. These memory artifacts represent key moments from our voyage. Each photo a star, each memory a constellation. This is our legacy.";
+        logContainer.addEventListener('click', () => {
+            if (logbookPanel.classList.toggle('visible')) {
+                logTextElement.innerHTML = '';
+                typeText(logTextElement, logContent, 0);
+            }
+        });
 
         // --- Settings and Theme Logic ---
         const settingsButton = document.getElementById('settings-button');
@@ -371,10 +362,7 @@
             settingsPanel.classList.toggle('active');
             content.style.filter = settingsPanel.classList.contains('active') ? 'blur(5px)' : 'none';
         });
-        const closeSettings = () => {
-            settingsPanel.classList.remove('active');
-            content.style.filter = 'none';
-        };
+        const closeSettings = () => { settingsPanel.classList.remove('active'); content.style.filter = 'none'; };
         
         const playThemeAudio = (theme) => {
             if (currentAudio) currentAudio.pause();
@@ -382,78 +370,68 @@
             if (!isMuted && currentAudio) currentAudio.play().catch(e => {});
         };
 
-        const hideAllThemeElements = () => {
-            document.querySelectorAll('.theme-element').forEach(el => {
-                el.classList.remove('visible');
-                el.innerHTML = '';
-            });
-        };
+        const hideAllThemeElements = () => document.querySelectorAll('.theme-element').forEach(el => { el.classList.remove('visible'); el.innerHTML = ''; });
         
-        document.getElementById('day-mode-button').addEventListener('click', () => { body.className = 'day-mode'; hideAllThemeElements(); closeSettings(); playThemeAudio('day'); });
-        document.getElementById('night-mode-button').addEventListener('click', () => { body.className = 'night-mode'; hideAllThemeElements(); closeSettings(); playThemeAudio('night'); });
+        document.getElementById('day-mode-button').addEventListener('click', () => { body.className = 'day-mode'; hideAllThemeElements(); createBirds(5); closeSettings(); playThemeAudio('day'); });
+        document.getElementById('night-mode-button').addEventListener('click', () => { body.className = 'night-mode'; hideAllThemeElements(); document.getElementById('night-owl').classList.add('visible'); closeSettings(); playThemeAudio('night'); });
         document.getElementById('cosmic-mode-button').addEventListener('click', () => { body.className = 'cosmic-mode'; hideAllThemeElements(); closeSettings(); playThemeAudio('cosmic'); });
-        document.getElementById('nostalgia-mode-button').addEventListener('click', () => {
-            body.className = 'nostalgia-mode';
-            hideAllThemeElements();
-            createDust(20);
-            closeSettings();
-            playThemeAudio('nostalgia');
-        });
+        document.getElementById('nostalgia-mode-button').addEventListener('click', () => { body.className = 'nostalgia-mode'; hideAllThemeElements(); createDust(20); closeSettings(); playThemeAudio('nostalgia'); });
 
-        // --- Dust for Nostalgia Mode ---
         function createDust(count) {
-            const container = document.getElementById('dust-container');
-            container.innerHTML = '';
+            const container = document.getElementById('dust-container'); container.innerHTML = '';
             for (let i = 0; i < count; i++) {
-                const dust = document.createElement('div');
-                dust.className = 'dust-particle';
+                const dust = document.createElement('div'); dust.className = 'dust-particle';
                 const size = Math.random() * 4 + 1;
-                dust.style.width = `${size}px`;
-                dust.style.height = `${size}px`;
-                dust.style.setProperty('--x-start', `${Math.random() * 100}vw`);
-                dust.style.setProperty('--x-end', `${Math.random() * 100}vw`);
-                dust.style.animationDuration = `${Math.random() * 15 + 10}s`;
-                dust.style.animationDelay = `${Math.random() * 10}s`;
+                dust.style.cssText = `width:${size}px; height:${size}px; --x-start:${Math.random()*100}vw; --x-end:${Math.random()*100}vw; animation-duration:${Math.random()*15+10}s; animation-delay:${Math.random()*10}s;`;
                 container.appendChild(dust);
-            }
-            container.classList.add('visible');
+            } container.classList.add('visible');
+        }
+        function createBirds(count) {
+            const container = document.getElementById('bird-container'); container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const bird = document.createElement('div'); bird.className = 'bird';
+                bird.style.cssText = `top:${Math.random()*40}%; animation-duration:${Math.random()*8+8}s; animation-delay:${Math.random()*10}s;`;
+                container.appendChild(bird);
+            } container.classList.add('visible');
         }
 
         // --- Audio Logic ---
         document.getElementById('audio-toggle').addEventListener('click', (e) => {
-            isMuted = !isMuted;
-            e.currentTarget.textContent = isMuted ? '🔇' : '🔊';
+            isMuted = !isMuted; e.currentTarget.textContent = isMuted ? '🔇' : '🔊';
             Object.values(audios).forEach(audio => audio.muted = isMuted);
             if (!isMuted && currentAudio) currentAudio.play().catch(err => {});
             else if (isMuted && currentAudio) currentAudio.pause();
         });
         
-        // --- Canvas Starfield ---
-        const canvas = document.getElementById('cosmic-canvas');
-        const ctx = canvas.getContext('2d');
-        let stars = [];
+        // --- Canvas Starfield & Nebula ---
+        const canvas = document.getElementById('cosmic-canvas'), ctx = canvas.getContext('2d');
+        let stars = [], nebulaAngle = 0;
+        const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
         const initStars = (num) => {
             stars = [];
-            for (let i = 0; i < num; i++) {
-                stars.push({ x: Math.random() - 0.5, y: Math.random() - 0.5, z: Math.random() });
-            }
+            for (let i = 0; i < num; i++) stars.push({ x: Math.random() - 0.5, y: Math.random() - 0.5, z: Math.random() });
         };
-        const resize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        const drawNebula = () => {
+            const cx = canvas.width / 2, cy = canvas.height / 2;
+            const gradient = ctx.createRadialGradient(cx, cy, 50, cx, cy, Math.min(cx, cy) * 0.8);
+            gradient.addColorStop(0, `hsla(${260 + Math.sin(nebulaAngle) * 10}, 100%, 50%, 0.2)`);
+            gradient.addColorStop(0.5, `hsla(${200 + Math.sin(nebulaAngle) * 10}, 100%, 50%, 0.1)`);
+            gradient.addColorStop(1, `hsla(0, 0%, 0%, 0)`);
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            nebulaAngle += 0.001;
         };
         const animate = () => {
             if (body.classList.contains('cosmic-mode')) {
                 const fov = 150;
-                ctx.save();
-                ctx.translate(canvas.width / 2, canvas.height / 2);
+                ctx.save(); ctx.translate(canvas.width / 2, canvas.height / 2);
                 ctx.fillStyle = "rgba(0,0,0,0.2)";
                 ctx.fillRect(-canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+                drawNebula();
                 stars.forEach(star => {
                     star.z -= 0.005;
-                    if (star.z <= 0) { star.z = 1; }
-                    let scale = fov / (fov + star.z * 500);
-                    let r = (1 - star.z) * 2;
+                    if (star.z <= 0) star.z = 1;
+                    const scale = fov / (fov + star.z * 500), r = (1 - star.z) * 2;
                     ctx.beginPath();
                     ctx.arc(star.x * scale * canvas.width, star.y * scale * canvas.width, r, 0, Math.PI * 2);
                     ctx.fillStyle = `rgba(255,255,255,${1 - star.z})`;
@@ -463,10 +441,7 @@
             }
             requestAnimationFrame(animate);
         };
-        window.addEventListener('resize', resize);
-        resize();
-        initStars(1000);
-        animate();
+        window.addEventListener('resize', resize); resize(); initStars(1000); animate();
 
         // --- Timeline Interaction ---
         document.querySelectorAll('.timeline-event').forEach(event => {
@@ -483,17 +458,28 @@
             });
         });
 
-        // --- Secret Memory Easter Egg ---
+        // --- Secrets ---
         let clickCount = 0;
         document.getElementById('footer').addEventListener('click', () => {
             clickCount++;
             if (clickCount >= 5) {
                 const secretCard = document.getElementById('secret-card');
-                if (!secretCard.classList.contains('is-visible')) {
-                    secretCard.classList.add('is-visible');
-                    secretCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+                if (!secretCard.classList.contains('is-visible')) secretCard.classList.add('is-visible');
             }
+        });
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+        document.addEventListener('keydown', e => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    const overlay = document.getElementById('konami-overlay');
+                    overlay.classList.add('visible');
+                    if(!isMuted) audios.secret.play();
+                    setTimeout(() => overlay.classList.remove('visible'), 3000);
+                    konamiIndex = 0;
+                }
+            } else { konamiIndex = 0; }
         });
     });
     </script>
